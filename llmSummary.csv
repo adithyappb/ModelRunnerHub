@@ -1,0 +1,2 @@
+Model Name,Number of Model Parameters,Average Query Execution Time,Standard Deviation of Query Execution Time,Average Memory Usage,Standard Deviation of Memory Usage
+TheBloke/open-llama-7b-open-instruct-GGML,4,130.8031723499298,3.134658736291099,3947.5765625,11.633573944605732
