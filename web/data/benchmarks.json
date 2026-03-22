@@ -1,0 +1,530 @@
+{
+  "meta": {
+    "title": "Model Runner Hub",
+    "version": "2026-03",
+    "lastUpdated": "2026-03-22",
+    "dataSourceNote": "Replace or merge this file with exports from Open LLM Leaderboard, SWE-bench, or your own runs. Model lineup targets current frontier SKUs; numeric scores are illustrative placeholders—substitute measured results before any production or procurement use.",
+    "categories": [
+      { "id": "reasoning", "label": "Reasoning & knowledge" },
+      { "id": "coding", "label": "Code generation" },
+      { "id": "swe", "label": "Software engineering (SWE)" },
+      { "id": "math", "label": "Math" },
+      { "id": "agent", "label": "Agents & tools" }
+    ]
+  },
+  "benchmarkDefinitions": [
+    { "id": "mmlu", "label": "MMLU", "short": "Broad knowledge", "category": "reasoning", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "gpqa", "label": "GPQA Diamond", "short": "Graduate Q&A", "category": "reasoning", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "arc_challenge", "label": "ARC-Challenge", "short": "Science reasoning", "category": "reasoning", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "humaneval", "label": "HumanEval", "short": "Python functions", "category": "coding", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "mbpp", "label": "MBPP", "short": "Basic Python", "category": "coding", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "swe_bench_verified", "label": "SWE-bench Verified", "short": "Real GitHub issues", "category": "swe", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "swe_bench_lite", "label": "SWE-bench Lite", "short": "Smaller SWE set", "category": "swe", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "gsm8k", "label": "GSM8K", "short": "Grade-school math", "category": "math", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "math", "label": "MATH", "short": "Competition math", "category": "math", "unit": "%", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "tau_bench", "label": "τ-bench / tool-use", "short": "Tool/agent tasks", "category": "agent", "unit": "score", "higherIsBetter": true, "scaleMax": 100 },
+    { "id": "latency_ms", "label": "Typical latency", "short": "Lower is faster", "category": "agent", "unit": "ms", "higherIsBetter": false, "scaleMax": null }
+  ],
+  "presets": [
+    {
+      "id": "reasoning",
+      "label": "Reasoning & knowledge",
+      "description": "Weights MMLU, GPQA, and ARC for general reasoning strength.",
+      "weights": { "mmlu": 0.4, "gpqa": 0.35, "arc_challenge": 0.25 }
+    },
+    {
+      "id": "coding",
+      "label": "Coding",
+      "description": "HumanEval + MBPP for pure code synthesis.",
+      "weights": { "humaneval": 0.55, "mbpp": 0.45 }
+    },
+    {
+      "id": "swe",
+      "label": "SWE / engineering",
+      "description": "SWE-bench style tasks—closest to real repo work.",
+      "weights": { "swe_bench_verified": 0.7, "swe_bench_lite": 0.3 }
+    },
+    {
+      "id": "math",
+      "label": "Math",
+      "description": "GSM8K + MATH for numerical reasoning.",
+      "weights": { "gsm8k": 0.4, "math": 0.6 }
+    },
+    {
+      "id": "balanced",
+      "label": "Balanced all-rounder",
+      "description": "Even spread across reasoning, code, and SWE.",
+      "weights": {
+        "mmlu": 0.15,
+        "humaneval": 0.2,
+        "swe_bench_verified": 0.35,
+        "gsm8k": 0.15,
+        "gpqa": 0.15
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "claude-4-6-opus",
+      "name": "Claude 4.6 Opus",
+      "provider": "Anthropic",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2026-01",
+      "scores": {
+        "mmlu": 93.8,
+        "gpqa": 83.5,
+        "arc_challenge": 96.8,
+        "humaneval": 95.2,
+        "mbpp": 92.0,
+        "swe_bench_verified": 70.5,
+        "swe_bench_lite": 45.5,
+        "gsm8k": 99.0,
+        "math": 90.5,
+        "tau_bench": 84.0,
+        "latency_ms": 3200
+      }
+    },
+    {
+      "id": "claude-4-6-sonnet",
+      "name": "Claude 4.6 Sonnet",
+      "provider": "Anthropic",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2026-01",
+      "scores": {
+        "mmlu": 91.6,
+        "gpqa": 78.0,
+        "arc_challenge": 95.5,
+        "humaneval": 94.5,
+        "mbpp": 91.0,
+        "swe_bench_verified": 67.0,
+        "swe_bench_lite": 43.5,
+        "gsm8k": 98.2,
+        "math": 87.5,
+        "tau_bench": 86.0,
+        "latency_ms": 680
+      }
+    },
+    {
+      "id": "gpt-5-4",
+      "name": "GPT-5.4",
+      "provider": "OpenAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2026-02",
+      "scores": {
+        "mmlu": 93.5,
+        "gpqa": 81.0,
+        "arc_challenge": 96.4,
+        "humaneval": 95.0,
+        "mbpp": 91.5,
+        "swe_bench_verified": 69.0,
+        "swe_bench_lite": 44.8,
+        "gsm8k": 98.8,
+        "math": 90.0,
+        "tau_bench": 86.5,
+        "latency_ms": 920
+      }
+    },
+    {
+      "id": "gpt-5-3",
+      "name": "GPT-5.3",
+      "provider": "OpenAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-12",
+      "scores": {
+        "mmlu": 92.0,
+        "gpqa": 77.5,
+        "arc_challenge": 95.2,
+        "humaneval": 93.8,
+        "mbpp": 90.2,
+        "swe_bench_verified": 66.5,
+        "swe_bench_lite": 43.0,
+        "gsm8k": 98.0,
+        "math": 88.0,
+        "tau_bench": 84.5,
+        "latency_ms": 780
+      }
+    },
+    {
+      "id": "gpt-5-2",
+      "name": "GPT-5.2",
+      "provider": "OpenAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-10",
+      "scores": {
+        "mmlu": 90.8,
+        "gpqa": 74.0,
+        "arc_challenge": 94.4,
+        "humaneval": 92.5,
+        "mbpp": 88.8,
+        "swe_bench_verified": 63.5,
+        "swe_bench_lite": 41.2,
+        "gsm8k": 97.6,
+        "math": 86.0,
+        "tau_bench": 82.5,
+        "latency_ms": 650
+      }
+    },
+    {
+      "id": "gpt-5-4-codex",
+      "name": "GPT-5.4 Codex",
+      "provider": "OpenAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2026-02",
+      "scores": {
+        "mmlu": 91.2,
+        "gpqa": 72.0,
+        "arc_challenge": 94.0,
+        "humaneval": 97.0,
+        "mbpp": 95.0,
+        "swe_bench_verified": 73.5,
+        "swe_bench_lite": 47.5,
+        "gsm8k": 97.0,
+        "math": 84.5,
+        "tau_bench": 89.0,
+        "latency_ms": 1050
+      }
+    },
+    {
+      "id": "gpt-5-3-codex",
+      "name": "GPT-5.3 Codex",
+      "provider": "OpenAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-12",
+      "scores": {
+        "mmlu": 89.8,
+        "gpqa": 69.5,
+        "arc_challenge": 93.2,
+        "humaneval": 96.2,
+        "mbpp": 94.0,
+        "swe_bench_verified": 71.0,
+        "swe_bench_lite": 46.0,
+        "gsm8k": 96.2,
+        "math": 82.5,
+        "tau_bench": 87.5,
+        "latency_ms": 880
+      }
+    },
+    {
+      "id": "gpt-5-2-codex",
+      "name": "GPT-5.2 Codex",
+      "provider": "OpenAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-10",
+      "scores": {
+        "mmlu": 88.5,
+        "gpqa": 66.5,
+        "arc_challenge": 92.5,
+        "humaneval": 95.0,
+        "mbpp": 92.8,
+        "swe_bench_verified": 68.5,
+        "swe_bench_lite": 44.5,
+        "gsm8k": 95.5,
+        "math": 80.0,
+        "tau_bench": 85.0,
+        "latency_ms": 720
+      }
+    },
+    {
+      "id": "gemini-2-5-pro",
+      "name": "Gemini 2.5 Pro",
+      "provider": "Google",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-11",
+      "scores": {
+        "mmlu": 91.0,
+        "gpqa": 76.0,
+        "arc_challenge": 95.0,
+        "humaneval": 93.5,
+        "mbpp": 90.0,
+        "swe_bench_verified": 65.0,
+        "swe_bench_lite": 42.5,
+        "gsm8k": 97.8,
+        "math": 86.5,
+        "tau_bench": 83.0,
+        "latency_ms": 1100
+      }
+    },
+    {
+      "id": "grok-4",
+      "name": "Grok 4",
+      "provider": "xAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-12",
+      "scores": {
+        "mmlu": 89.5,
+        "gpqa": 71.0,
+        "arc_challenge": 93.5,
+        "humaneval": 92.0,
+        "mbpp": 88.5,
+        "swe_bench_verified": 60.0,
+        "swe_bench_lite": 39.5,
+        "gsm8k": 96.8,
+        "math": 84.0,
+        "tau_bench": 79.0,
+        "latency_ms": 750
+      }
+    },
+    {
+      "id": "kimi-k2",
+      "name": "Kimi K2",
+      "provider": "Moonshot",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-11",
+      "scores": {
+        "mmlu": 90.2,
+        "gpqa": 73.5,
+        "arc_challenge": 94.0,
+        "humaneval": 93.0,
+        "mbpp": 89.5,
+        "swe_bench_verified": 62.0,
+        "swe_bench_lite": 40.5,
+        "gsm8k": 97.2,
+        "math": 87.0,
+        "tau_bench": 80.5,
+        "latency_ms": 980
+      }
+    },
+    {
+      "id": "qwen3-max",
+      "name": "Qwen3-Max",
+      "provider": "Alibaba",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2026-01",
+      "scores": {
+        "mmlu": 89.8,
+        "gpqa": 70.0,
+        "arc_challenge": 93.0,
+        "humaneval": 92.5,
+        "mbpp": 89.0,
+        "swe_bench_verified": 61.5,
+        "swe_bench_lite": 40.0,
+        "gsm8k": 97.0,
+        "math": 88.5,
+        "tau_bench": 81.0,
+        "latency_ms": 890
+      }
+    },
+    {
+      "id": "claude-3-7-sonnet",
+      "name": "Claude 3.7 Sonnet",
+      "provider": "Anthropic",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-02",
+      "scores": {
+        "mmlu": 86.5,
+        "gpqa": 68.0,
+        "arc_challenge": 93.0,
+        "humaneval": 92.0,
+        "mbpp": 88.5,
+        "swe_bench_verified": 62.3,
+        "swe_bench_lite": 41.0,
+        "gsm8k": 96.0,
+        "math": 75.0,
+        "tau_bench": 78.0,
+        "latency_ms": 850
+      }
+    },
+    {
+      "id": "gpt-4o-2024-11",
+      "name": "GPT-4o (Nov 2024)",
+      "provider": "OpenAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2024-11",
+      "scores": {
+        "mmlu": 88.7,
+        "gpqa": 66.0,
+        "arc_challenge": 92.8,
+        "humaneval": 90.2,
+        "mbpp": 87.0,
+        "swe_bench_verified": 38.8,
+        "swe_bench_lite": 35.0,
+        "gsm8k": 95.8,
+        "math": 72.0,
+        "tau_bench": 80.0,
+        "latency_ms": 620
+      }
+    },
+    {
+      "id": "o1-preview",
+      "name": "o1 (reasoning)",
+      "provider": "OpenAI",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2024-09",
+      "scores": {
+        "mmlu": 92.0,
+        "gpqa": 78.0,
+        "arc_challenge": 95.0,
+        "humaneval": 92.0,
+        "mbpp": 90.0,
+        "swe_bench_verified": 48.0,
+        "swe_bench_lite": 38.0,
+        "gsm8k": 98.0,
+        "math": 85.0,
+        "tau_bench": 72.0,
+        "latency_ms": 12000
+      }
+    },
+    {
+      "id": "deepseek-r1",
+      "name": "DeepSeek-R1",
+      "provider": "DeepSeek",
+      "openWeights": true,
+      "sizeB": 671,
+      "release": "2025-01",
+      "scores": {
+        "mmlu": 90.5,
+        "gpqa": 72.0,
+        "arc_challenge": 94.0,
+        "humaneval": 91.0,
+        "mbpp": 88.0,
+        "swe_bench_verified": 49.2,
+        "swe_bench_lite": 36.0,
+        "gsm8k": 97.0,
+        "math": 87.0,
+        "tau_bench": 70.0,
+        "latency_ms": 2100
+      }
+    },
+    {
+      "id": "llama-3-3-70b",
+      "name": "Llama 3.3 70B Instruct",
+      "provider": "Meta",
+      "openWeights": true,
+      "sizeB": 70,
+      "release": "2024-12",
+      "scores": {
+        "mmlu": 86.0,
+        "gpqa": 58.0,
+        "arc_challenge": 89.0,
+        "humaneval": 88.0,
+        "mbpp": 82.0,
+        "swe_bench_verified": 33.0,
+        "swe_bench_lite": 28.0,
+        "gsm8k": 94.0,
+        "math": 68.0,
+        "tau_bench": 65.0,
+        "latency_ms": 1400
+      }
+    },
+    {
+      "id": "qwen-2-5-72b",
+      "name": "Qwen2.5 72B Instruct",
+      "provider": "Alibaba",
+      "openWeights": true,
+      "sizeB": 72,
+      "release": "2024-09",
+      "scores": {
+        "mmlu": 85.5,
+        "gpqa": 55.0,
+        "arc_challenge": 88.0,
+        "humaneval": 86.0,
+        "mbpp": 84.0,
+        "swe_bench_verified": 36.0,
+        "swe_bench_lite": 30.0,
+        "gsm8k": 95.5,
+        "math": 83.0,
+        "tau_bench": 68.0,
+        "latency_ms": 1600
+      }
+    },
+    {
+      "id": "gemini-2-5-flash",
+      "name": "Gemini 2.5 Flash",
+      "provider": "Google",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2025-09",
+      "scores": {
+        "mmlu": 88.5,
+        "gpqa": 65.0,
+        "arc_challenge": 92.0,
+        "humaneval": 91.0,
+        "mbpp": 87.5,
+        "swe_bench_verified": 42.0,
+        "swe_bench_lite": 33.5,
+        "gsm8k": 95.8,
+        "math": 74.5,
+        "tau_bench": 80.0,
+        "latency_ms": 320
+      }
+    },
+    {
+      "id": "mistral-large-2",
+      "name": "Mistral Large 2",
+      "provider": "Mistral",
+      "openWeights": false,
+      "sizeB": null,
+      "release": "2024-07",
+      "scores": {
+        "mmlu": 84.0,
+        "gpqa": 52.0,
+        "arc_challenge": 87.0,
+        "humaneval": 84.0,
+        "mbpp": 80.0,
+        "swe_bench_verified": 30.0,
+        "swe_bench_lite": 26.0,
+        "gsm8k": 92.0,
+        "math": 65.0,
+        "tau_bench": 62.0,
+        "latency_ms": 900
+      }
+    },
+    {
+      "id": "codestral",
+      "name": "Codestral",
+      "provider": "Mistral",
+      "openWeights": false,
+      "sizeB": 22,
+      "release": "2024-05",
+      "scores": {
+        "mmlu": 78.0,
+        "gpqa": 42.0,
+        "arc_challenge": 82.0,
+        "humaneval": 86.0,
+        "mbpp": 83.0,
+        "swe_bench_verified": 28.0,
+        "swe_bench_lite": 24.0,
+        "gsm8k": 88.0,
+        "math": 58.0,
+        "tau_bench": 58.0,
+        "latency_ms": 450
+      }
+    },
+    {
+      "id": "deepseek-v3",
+      "name": "DeepSeek-V3",
+      "provider": "DeepSeek",
+      "openWeights": true,
+      "sizeB": 671,
+      "release": "2024-12",
+      "scores": {
+        "mmlu": 88.5,
+        "gpqa": 64.0,
+        "arc_challenge": 91.5,
+        "humaneval": 90.0,
+        "mbpp": 87.0,
+        "swe_bench_verified": 42.0,
+        "swe_bench_lite": 33.0,
+        "gsm8k": 96.5,
+        "math": 82.0,
+        "tau_bench": 74.0,
+        "latency_ms": 1800
+      }
+    }
+  ]
+}

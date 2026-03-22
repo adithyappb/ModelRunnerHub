@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07090d" />
+    <title>Model Runner Hub — Benchmark intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="ambient" aria-hidden="true">
+      <div class="ambient__orb ambient__orb--a"></div>
+      <div class="ambient__orb ambient__orb--b"></div>
+      <div class="ambient__grid"></div>
+      <div class="ambient__noise"></div>
+    </div>
+
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand__mark" aria-hidden="true">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="36" height="36" rx="10" fill="url(#g)" />
+              <path d="M10 24V12h3.2l4.8 7.1L22.8 12H26v12h-2.9v-7.2l-3.8 5.6h-1.9l-3.8-5.6V24H10z" fill="#07090d" fill-opacity=".92" />
+              <defs>
+                <linearGradient id="g" x1="8" y1="4" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="var(--spectral-1)" />
+                  <stop offset="1" stop-color="var(--spectral-2)" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="brand__text">
+            <h1 id="meta-title">Model Runner Hub</h1>
+            <p>
+              Weighted benchmarks, cohort percentiles, and explainable rankings — pick a <strong>use-case preset</strong>,
+              then slice metrics by domain.
+            </p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <span class="pill pill--live" id="meta-version" title="Dataset revision">Syncing…</span>
+          <button type="button" class="btn btn-ghost" id="help-btn" title="Shortcuts (?)" aria-label="Keyboard shortcuts">
+            ?
+          </button>
+          <button type="button" class="btn btn-ghost" id="theme-toggle" title="Theme">◐</button>
+          <button type="button" class="btn btn-secondary" id="export-btn" title="Export filtered table (CSV)">Export CSV</button>
+          <button type="button" class="btn btn-primary" id="reload-btn">Reload</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="hero panel panel--hero" aria-labelledby="hero-heading">
+        <div class="hero__top">
+          <h2 id="hero-heading" class="hero__title">Live cohort snapshot</h2>
+          <p class="hero__sub" id="hero-preset-label">—</p>
+        </div>
+        <div class="hero__stats" id="hero-stats">
+          <div class="stat">
+            <span class="stat__label">Models</span>
+            <span class="stat__value" id="stat-models">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Metrics</span>
+            <span class="stat__value" id="stat-metrics">—</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Visible rows</span>
+            <span class="stat__value" id="stat-visible">—</span>
+          </div>
+          <div class="stat stat--accent">
+            <span class="stat__label">Leader (preset)</span>
+            <span class="stat__value stat__value--sm" id="stat-leader">—</span>
+          </div>
+        </div>
+      </section>
+
+      <div class="layout-main">
+        <aside class="panel panel--aside" aria-label="Filters and presets">
+          <div class="aside__head">
+            <h2 class="section-label">Presets</h2>
+            <p class="lede">Each preset is a <em>weight vector</em> over benchmarks — composite score = weighted normalized performance.</p>
+          </div>
+          <div class="preset-grid" id="preset-list"></div>
+
+          <h2 class="section-label section-label--spaced">Metric lens</h2>
+          <p class="lede lede--tight">Show only columns for a benchmark family.</p>
+          <div class="chip-row" id="category-chips"></div>
+
+          <h2 class="section-label section-label--spaced">Filters</h2>
+          <div class="field">
+            <label for="search">Search <kbd>/</kbd></label>
+            <input id="search" type="search" placeholder="Model, provider, id…" autocomplete="off" />
+          </div>
+          <div class="field toggle-row">
+            <label class="switch">
+              <input type="checkbox" id="open-only" />
+              <span class="switch__ui"></span>
+              <span class="switch__text">Open-weights only</span>
+            </label>
+          </div>
+
+          <h2 class="section-label section-label--spaced">Data feed</h2>
+          <p class="lede lede--tight">
+            Ship updates by editing <kbd>web/data/benchmarks.json</kbd> or hosting the same schema. Query:
+            <kbd>?data=https://…/benchmarks.json</kbd>
+          </p>
+          <div class="field">
+            <label for="data-url">Custom JSON URL</label>
+            <input id="data-url" type="url" placeholder="https://cdn.example.com/benchmarks.json" />
+          </div>
+          <p class="status" id="load-status">Initializing…</p>
+        </aside>
+
+        <section class="main-col">
+          <div class="panel panel--insights">
+            <div class="meta-bar">
+              <div>
+                <h2 class="panel-title">Signal deck</h2>
+                <p class="panel-sub">Top cohort picks for the active preset — reasons are median-delta signals on weighted metrics.</p>
+              </div>
+            </div>
+            <div class="insight-grid" id="insights"></div>
+          </div>
+
+          <div class="panel panel--table">
+            <div class="meta-bar">
+              <div>
+                <h2 class="panel-title">Benchmark matrix</h2>
+                <p class="panel-sub">Sort any column. Cells show value + cohort percentile bar. Composite uses preset weights.</p>
+              </div>
+              <span class="pill">Compare ≤4 · radar normalizes higher-is-better metrics</span>
+            </div>
+            <div class="table-wrap">
+              <table class="matrix">
+                <thead id="model-thead"></thead>
+                <tbody id="model-tbody"></tbody>
+              </table>
+            </div>
+            <div class="compare-bar">
+              <button type="button" class="btn btn-ghost" id="clear-compare">Clear selection</button>
+            </div>
+          </div>
+
+          <div class="panel panel--chart">
+            <div class="meta-bar">
+              <div>
+                <h2 class="panel-title">Multi-model radar</h2>
+                <p class="panel-sub">Normalized 0–100 per visible higher-is-better metric (up to eight axes).</p>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas id="radar" height="300"></canvas>
+            </div>
+          </div>
+
+          <p class="footer-note" id="footer-note"></p>
+        </section>
+      </div>
+    </main>
+
+    <div class="modal" id="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+      <div class="modal__backdrop" data-close="1"></div>
+      <div class="modal__card">
+        <h3 id="help-title">Shortcuts</h3>
+        <ul class="modal__list">
+          <li><kbd>/</kbd> Focus search</li>
+          <li><kbd>?</kbd> Toggle this panel</li>
+          <li><kbd>Esc</kbd> Close</li>
+        </ul>
+        <button type="button" class="btn btn-primary" data-close="1">Got it</button>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+    <script src="app.js" defer></script>
+  </body>
+</html>
