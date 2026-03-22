@@ -1,17 +1,36 @@
 # Model Runner Hub
 
-A small toolkit for **running local LLM benchmarks** (Python + Tk) and **exploring model scores** in a **static web dashboard**. Benchmark numbers in `web/data/benchmarks.json` are **data-driven**—swap the JSON for your own exports or measured runs.
+Local **LLM benchmarking** (Python + Tk) and a **static web dashboard** for exploring benchmark-style metrics. CSV results use a **v2 schema**; the web UI reads **`web/data/benchmarks.json`** (swap or host your own JSON).
+
+## Quick start
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate   # Windows
+# source .venv/bin/activate  # macOS / Linux
+
+pip install -r requirements.txt
+python ModelRunner.py
+```
+
+**Recommended default model:** `Qwen/Qwen2.5-0.5B-Instruct` (Hugging Face / `transformers` path). It is preselected in the UI and works **without** `llama-cpp-python`. GGUF models are optional and need a separate install (see below).
+
+For higher Hugging Face download limits, set `HF_TOKEN` in the environment before running.
 
 ## Repository layout
 
 | Path | Purpose |
 |------|---------|
-| `ModelRunner.py` | Tkinter UI: pick a model, run prompts, append results to `llmSummary.csv` (requires GPU/CPU setup per your env). |
-| `Visualizer.py` | Reads `llmSummary.csv` and writes histogram PNGs under `histograms/` (created at runtime). |
-| `web/` | Benchmark explorer: `index.html`, `styles.css`, `app.js`, and `data/benchmarks.json`. |
-| `serve_web.py` | Serves `web/` over HTTP (needed for fetch; avoids file-URL quirks). If the default port is busy, the next free port is used automatically. |
+| `benchmark_utils.py` | CSV v2 schema, stats helpers, migration from legacy `llmSummary.csv` headers. |
+| `ModelRunner.py` | GUI: model + prompts, background run, append row to `llmSummary.csv`. |
+| `Visualizer.py` | Plots from `llmSummary.csv` → `histograms/` (and versioned snapshots when used). |
+| `web/` | Dashboard: `index.html`, `styles.css`, `app.js`, `data/benchmarks.json`. |
+| `serve_web.py` | HTTP server for `web/` (avoids `file://` fetch limits). Default port **8765**, or next free in a short range. |
+| `requirements.txt` | Core stack; no GGUF C++ build. |
+| `requirements-gguf.txt` | Notes + optional `llama-cpp-python` wheels. |
+| `install_llama_windows.ps1` | Helper to try Windows-friendly `llama-cpp-python` installs. |
 
-## Web dashboard (recommended)
+## Web dashboard
 
 From the repo root:
 
@@ -19,42 +38,62 @@ From the repo root:
 python serve_web.py
 ```
 
-Open the URL printed in the terminal (default **8765**, or the next free port). Use **Reload** after editing `web/data/benchmarks.json`, or pass a hosted JSON with:
+Open the printed URL (default **8765**, or override with `PORT` / `python serve_web.py <port>`). Optional query: `?data=https://…/benchmarks.json` to load remote JSON.
 
-`http://127.0.0.1:<port>/?data=https://example.com/benchmarks.json`
+## Local inference GUI
 
-Features include weighted presets (reasoning, coding, SWE, math, balanced), filters, sortable matrix, cohort percentile bars, CSV export, and multi-model radar compare.
+1. **Hugging Face models** — install `requirements.txt`. First run downloads weights into the Hugging Face cache (not in this repo).
 
-## Local inference GUI (optional)
+2. **GGUF models** — `llama-cpp-python` is **not** in `requirements.txt` (Windows often fails to compile from source). Try wheels in order:
 
-Requires dependencies appropriate for your hardware (CUDA, `llama-cpp-python`, etc.):
+   ```bash
+   pip install llama-cpp-python --prefer-binary
+   pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+   ```
+
+   Or run `install_llama_windows.ps1`. If install still fails, stay on HF-only models.
+
+Each finished run **appends one row** to `llmSummary.csv` (v2 columns):
+
+| Column | Meaning |
+|--------|---------|
+| `run_id`, `timestamp` | UUID and UTC time |
+| `model_name`, `backend` | HF id; `transformers` or `gguf_llama_cpp` |
+| `num_parameters` | Parameter count when known (`-1` if unknown) |
+| `n_queries` | Number of prompts |
+| `latency_*`, `memory_*` | Wall-clock latency and RSS samples (`psutil` if installed) |
+| `tokens_per_sec_mean` | Estimated output throughput |
+
+Legacy v1 CSV rows are migrated in place on first append (`backend=legacy_import` where inferred).
+
+**Plots**
 
 ```bash
-pip install codecarbon huggingface_hub llama_cpp transformers memory_profiler pandas matplotlib numpy memory_profiler
+python Visualizer.py
 ```
 
-Then:
+`ModelRunner.py` also refreshes plots after a successful run. Set `MPL_SHOW=1` to open figures interactively; default is save-only under `histograms/`.
 
-```bash
-python ModelRunner.py
-```
+Edit model lists at the top of `ModelRunner.py` if you change repos or GGUF filenames.
 
-Results append to `llmSummary.csv`. Run `Visualizer.py` to regenerate histograms from that CSV.
+## Environment variables
 
-**Note:** `ModelRunner.py` references paths and model IDs you may need to align with your machine; treat it as a starting point.
+| Variable | Role |
+|----------|------|
+| `HF_TOKEN` | Authenticated Hugging Face Hub access (higher rate limits, fewer download issues). |
+| `LLAMA_N_GPU_LAYERS` | GGUF: `0` (CPU, default), `-1` or `N` for GPU offload when your build supports it. |
+| `MPL_SHOW` | Set to `1` / `true` to show Matplotlib windows from `Visualizer.py`. |
+| `PORT` | Used by `serve_web.py` if no CLI port is given. |
+| `CODECARBON_LOG_LEVEL` | App defaults this to reduce console noise if CodeCarbon is installed. |
 
-## Git
+The GUI sets `HF_HUB_DISABLE_SYMLINKS_WARNING` on Windows to quiet symlink cache notices (cache still works).
 
-- **`.gitignore`** excludes Python caches, virtualenvs, editor junk, and generated artifacts such as `llmSummary.csv` and `histograms/`.
-- Initialize or clone as usual, then:
+## Git and ignored files
 
-```bash
-git add .
-git status
-git commit -m "Describe your change."
-git push origin <branch>
-```
+See **`.gitignore`**: Python caches, virtualenvs, editor junk, and **regenerated / local run outputs** such as `llmSummary.csv`, `histograms/`, and **`emissions.csv`** (CodeCarbon log if present from older runs or external tools).
+
+Track `web/data/benchmarks.json` if it is your checked-in sample; use a branch or fork-specific file for private numbers if needed.
 
 ## License
 
-Add a `LICENSE` file if you plan to open-source the project.
+Add a `LICENSE` file if you open-source the project.

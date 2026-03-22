@@ -1,2 +1,4 @@
-Model Name,Number of Model Parameters,Average Query Execution Time,Standard Deviation of Query Execution Time,Average Memory Usage,Standard Deviation of Memory Usage
-TheBloke/open-llama-7b-open-instruct-GGML,4,130.8031723499298,3.134658736291099,3947.5765625,11.633573944605732
+run_id,timestamp,model_name,backend,num_parameters,n_queries,latency_mean_s,latency_std_s,latency_p95_s,memory_mean_mb,memory_std_mb,tokens_per_sec_mean
+c331aa83-33bf-4ee4-a862-c50126f06e7b,,TheBloke/open-llama-7b-open-instruct-GGML,legacy_import,4,,130.8031723499298,3.134658736291099,,3947.5765625,11.633573944605732,
+e7ab7c39-0d0a-4a70-a377-27f4b87de1f0,2026-03-22T03:12:34Z,Qwen/Qwen2.5-0.5B-Instruct,transformers,494032768,6,21.275450816669036,6.401624442842419,30.463512374990387,2193.751953125,1.439681015712145,12.032647496213212
+a63662d1-7ffa-4fb9-8050-9303e47ac9de,2026-03-22T03:29:15Z,Qwen/Qwen2.5-0.5B-Instruct,transformers,494032768,6,20.473657966669027,6.1239805213473275,30.419120475038653,2384.5657552083335,21.264382605036477,11.811926023529177

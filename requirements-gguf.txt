@@ -1,0 +1,14 @@
+# Optional: llama-cpp-python (GGUF models in ModelRunner).
+#
+# Windows — use prebuilt wheels first (no Visual Studio / CMake):
+#
+#   pip install llama-cpp-python --prefer-binary
+#   pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+#
+# The second line uses community CPU wheels (abetlen) when PyPI has no wheel for your Python version.
+# For NVIDIA GPU builds, search: jllllll llama-cpp-python cuBLAS wheels (match your CUDA).
+#
+# If pip still builds from source and fails, use Hugging Face models only (Qwen/SmolLM/Phi/Falcon)
+# — they need transformers + torch, not llama-cpp-python.
+#
+llama-cpp-python>=0.2.0

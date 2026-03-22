@@ -1,0 +1,19 @@
+# Core: CSV, GUI, plots — installs without compiling C extensions.
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.8
+psutil>=5.9
+codecarbon>=2.3
+huggingface_hub>=0.20
+
+# Hugging Face path (transformers; large downloads possible)
+torch>=2.1
+transformers>=4.38
+accelerate>=0.27
+safetensors>=0.4
+
+# Nicer plots (optional)
+seaborn>=0.13
+
+# GGUF / llama.cpp is NOT listed here — it often fails to build from source on Windows
+# without Visual Studio C++ Build Tools. Install separately; see requirements-gguf.txt
